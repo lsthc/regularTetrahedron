@@ -5,6 +5,12 @@
     --face-color: rgba(92, 124, 250, 0.2);
     --face-border: rgba(92, 124, 250, 0.8);
     --size: 200px;
+    
+    /* 📐 정사면체 구성을 위한 새로운 변수 */
+    /* 정사면체 높이의 1/4 (각 면을 중심에서 떨어진 거리) */
+    --tetra-z-offset: calc(var(--size) * 0.204); 
+    /* 각 측면을 수평면에 대해 회전시키는 각도 (약 54.74도) */
+    --tetra-rotate-x: 54.74deg; 
 }
 
 * {
@@ -42,19 +48,21 @@ body {
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transform: rotateX(-20deg) rotateY(30deg);
+    /* 초기 위치 조정 */
+    transform: rotateX(-30deg) rotateY(45deg); 
     animation: spin 10s linear infinite;
 }
 
 @keyframes spin {
-    from { transform: rotateX(-20deg) rotateY(0deg); }
-    to { transform: rotateX(-20deg) rotateY(360deg); }
+    from { transform: rotateX(-30deg) rotateY(0deg); }
+    to { transform: rotateX(-30deg) rotateY(360deg); }
 }
 
 .face {
     position: absolute;
+    /* 삼각형의 높이 (정삼각형 높이 공식: side * sqrt(3) / 2) */
+    height: calc(var(--size) * 0.866); 
     width: var(--size);
-    height: calc(var(--size) * 0.866);
     background: var(--face-color);
     border: 1px solid var(--face-border);
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
@@ -70,10 +78,33 @@ body {
     background: rgba(92, 124, 250, 0.4);
 }
 
-.face-1 { transform: translateZ(calc(var(--size) * 0.288)) rotateX(19.5deg); }
-.face-2 { transform: rotateY(120deg) translateZ(calc(var(--size) * 0.288)) rotateX(19.5deg); }
-.face-3 { transform: rotateY(240deg) translateZ(calc(var(--size) * 0.288)) rotateX(19.5deg); }
-.face-4 { transform: rotateX(90deg) translateZ(calc(var(--size) * 0.288)) rotateX(19.5deg) scaleY(-1); } 
+/* 🟢 측면 3개: 중심에서 바깥으로 이동 후, 중심을 향해 회전 */
+.face-1 { 
+    transform: 
+        rotateY(0deg) /* 기준 위치 */
+        translateZ(var(--tetra-z-offset)) 
+        rotateX(var(--tetra-rotate-x)); 
+}
+.face-2 { 
+    transform: 
+        rotateY(120deg) /* Y축으로 120도 회전 */
+        translateZ(var(--tetra-z-offset)) 
+        rotateX(var(--tetra-rotate-x)); 
+}
+.face-3 { 
+    transform: 
+        rotateY(240deg) /* Y축으로 240도 회전 */
+        translateZ(var(--tetra-z-offset)) 
+        rotateX(var(--tetra-rotate-x)); 
+}
+
+/* 🔵 밑면 1개: X축으로 90도 회전하여 수평면으로 만들고, 아래로 이동 */
+.face-4 { 
+    transform: 
+        rotateX(90deg) /* 수평면으로 만들기 */
+        translateZ(var(--tetra-z-offset)) 
+        rotateZ(180deg); /* 텍스트 등이 올바른 방향을 보도록 조정 */
+} 
 
 .description {
     text-align: center;
